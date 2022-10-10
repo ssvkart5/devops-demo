@@ -3,7 +3,7 @@
 # add the user ansible admin
 useradd ansibleadmin
 # set password : the below command will avoid re entering the password
-echo "ansibleansible" | passwd --stdin ansibleadmin
+echo "ansible123" | passwd --stdin ansibleadmin
 # modify the sudoers file at /etc/sudoers and add entry
 echo 'ansibleadmin     ALL=(ALL)      NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 echo 'ec2-user     ALL=(ALL)      NOPASSWD: ALL' | sudo tee -a /etc/sudoers

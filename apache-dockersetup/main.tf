@@ -147,7 +147,7 @@ resource "aws_instance" "ansible-apache-server" {
 
 }
 
-# create Ansible EC2 instance for apache-tomcat
+# create Ansible EC2 instance for docker-host
 resource "aws_instance" "docker-host" {
   ami           = var.ami
   instance_type = var.instance_type
