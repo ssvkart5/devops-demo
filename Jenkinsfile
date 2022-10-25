@@ -25,7 +25,7 @@ pipeline{
 
         //Stage3 : Publsih the artifacts to nexus
         stage ('Pubish to nexus repository'){
-            steps {nexusArtifactUploader artifacts: [[artifactId: 'ssvkart5devops', classifier: '', file: 'target/ssvkart5devops-0.0.4-SNAPSHOT.war', type: 'war']], credentialsId: '6c54bb93-7408-4960-bebb-ced01939b34a', groupId: 'com.ssvkart5lab', nexusUrl: '54.210.226.174:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'ssvkart5devopslab-SNAPSHOT', version: '0.0.4-SNAPSHOT'
+            steps {nexusArtifactUploader artifacts: [[artifactId: 'ssvkart5devops', classifier: '', file: 'target/ssvkart5devops-0.0.4-SNAPSHOT.war', type: 'war']], credentialsId: '4076b3ca-f09e-47a1-a82d-32a125623be8', groupId: 'com.ssvkart5lab', nexusUrl: '54.83.151.162:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'ssvkart5devops-SNAPSHOT', version: '0.0.4-SNAPSHOT'
             }
         }   
 
