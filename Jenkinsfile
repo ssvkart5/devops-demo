@@ -37,7 +37,7 @@ pipeline{
             type: 'war']], 
             credentialsId: '6c54bb93-7408-4960-bebb-ced01939b34a', 
             groupId: 'com.ssvkart5lab', 
-            nexusUrl: '54.210.226.174:8081', 
+            nexusUrl: '44.201.109.126:8081/', 
             nexusVersion: 'nexus3', 
             protocol: 'http', 
             repository: 'ssvkart5devopslab-SNAPSHOT', 
