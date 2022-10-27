@@ -36,17 +36,18 @@ pipeline{
 
                 def NexusRepo = Version.endsWith("SNAPSHOT") ? "ssvkart5devops-SNAPSHOT" : "ssvkart5devops-RELEASE"
                     
-                nexusArtifactUploader artifacts: [[artifactId: 'ssvkart5devops', 
+                nexusArtifactUploader artifacts: 
+                [[artifactId: "${ArtifactId}", 
                 classifier: '', 
-                file: 'target/ssvkart5devops-0.0.4-SNAPSHOT.war', 
+                file: "target/${ArtifactId}-${Version}.war", 
                 type: 'war']], 
                 credentialsId: '6c54bb93-7408-4960-bebb-ced01939b34a', 
-                groupId: 'com.ssvkart5lab', 
+                groupId: "${GroupId}", 
                 nexusUrl: '172.20.10.199:8081/', 
                 nexusVersion: 'nexus3', 
                 protocol: 'http', 
-                repository: 'ssvkart5devops-SNAPSHOT', 
-                version: '0.0.4-SNAPSHOT'
+                repository: "${NexusRepo}", 
+                version: "${Version}"
                 }
             }   
            
