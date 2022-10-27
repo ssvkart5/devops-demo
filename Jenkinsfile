@@ -34,7 +34,7 @@ pipeline{
             steps {
                 script {
 
-                def NexusRepo = Version.endsWith("SNAPSHOT") ? "ssvkart5devopslab-SNAPSHOT" : "ssvkart5devopslab-RELEASE"
+                def NexusRepo = Version.endsWith("SNAPSHOT") ? "ssvkart5devops-SNAPSHOT" : "ssvkart5devops-RELEASE"
                     
                 nexusArtifactUploader artifacts: [[artifactId: 'ssvkart5devops', 
                 classifier: '', 
@@ -45,7 +45,7 @@ pipeline{
                 nexusUrl: '172.20.10.199:8081/', 
                 nexusVersion: 'nexus3', 
                 protocol: 'http', 
-                repository: 'ssvkart5devopslab-SNAPSHOT', 
+                repository: 'ssvkart5devops-SNAPSHOT', 
                 version: '0.0.4-SNAPSHOT'
                 }
             }   
