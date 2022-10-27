@@ -5,10 +5,10 @@ pipeline{
         maven 'maven'
     }
     environment{
-        artifactId = readMavenPom().getArtifactId()
-        version = readMavenPom().getVersion()
-        name = readMavenPom().getName()
-        groupId = readMavenPom().getGroupId()
+        ArtifactId = readMavenPom().getArtifactId()
+        Version = readMavenPom().getVersion()
+        Name = readMavenPom().getName()
+        GroupId = readMavenPom().getGroupId()
     }
 
     stages {
@@ -37,17 +37,17 @@ pipeline{
                 def NexusRepo = Version.endsWith("SNAPSHOT") ? "ssvkart5devops-SNAPSHOT" : "ssvkart5devops-RELEASE"
                     
                 nexusArtifactUploader artifacts: 
-                [[artifactId: "${artifactId}", 
+                [[artifactId: "${ArtifactId}", 
                 classifier: '', 
-                file: "target/${artifactId}-${version}.war", 
+                file: "target/${ArtifactId}-${Version}.war", 
                 type: 'war']], 
                 credentialsId: '6c54bb93-7408-4960-bebb-ced01939b34a', 
-                groupId: "${groupId}", 
+                groupId: "${GroupId}", 
                 nexusUrl: '172.20.10.199:8081/', 
                 nexusVersion: 'nexus3', 
                 protocol: 'http', 
                 repository: "${NexusRepo}", 
-                version: "${version}"
+                version: "${Version}"
                 }
             }   
            
@@ -56,10 +56,10 @@ pipeline{
         // Stage4 : Print information about env variables
         stage ('Print environment variables to check artifacts'){
             steps {
-                echo "Artifact ID is '${artifactId}'"
-                echo "Version is '${version}'"
-                echo "Name is '${name}'"
-                echo "Group ID is '${groupId}'"
+                echo "Artifact ID is '${ArtifactId}'"
+                echo "Version is '${Version}'"
+                echo "Name is '${Name}'"
+                echo "Group ID is '${GroupId}'"
             }
         }
 
