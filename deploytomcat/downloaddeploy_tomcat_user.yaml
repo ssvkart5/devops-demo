@@ -1,0 +1,31 @@
+---
+- name: This playbook to download a war file from nexus
+  hosts: localhost
+  become: true
+  vars_files:
+    - /opt/playbooks/variables.yaml
+
+  tasks:
+    - name: download war file
+      shell: 'curl -u admin:Vbgy0r!23 -X GET -L "http://172.20.10.199:8081/service/rest/v1/search/assets/download?sort=version&repository=ssvkart5devops-SNAPSHOT&maven.groupId=com.ssvkart5lab&maven.artifactId=ssvkart5devops&maven.extension=war" -H "accept: application/json" --output /home/ansibleadmin/latest.war'
+        
+      args:
+        chdir: "{{ changedir_location }}"
+
+- name: Deploy the latest war file to load apache tomcat
+  hosts : webservers
+  become: true
+  vars_files:
+    - /opt/playbooks/variables.yaml
+
+  tasks:
+    - copy: 
+        src: "{{ item }}"
+        dest: "{{ destination_location }}"
+        owner: tomcat
+        group: tomcat
+        mode: u+rwx,g+rwx,o-rwx
+      with_fileglob:
+        - "{{ buildartifact_location }}"
+
+...

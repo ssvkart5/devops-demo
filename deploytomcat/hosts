@@ -1,0 +1,5 @@
+[webservers]
+ansible-apachenode
+
+[dockerhost]
+ansible-dockerhost
