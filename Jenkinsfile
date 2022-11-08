@@ -56,7 +56,7 @@ pipeline{
                 }
 
             }
-        }
+        
         // Stage5 : Deploying the build artifact to Docker
         stage ('Deploy to docker'){
             steps {
