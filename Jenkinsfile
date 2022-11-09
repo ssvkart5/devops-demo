@@ -4,7 +4,12 @@ pipeline{
     tools {
         maven 'maven'
     }
-
+    environment{
+       ArtifactId = readMavenPom().getArtifactId()
+       Version = readMavenPom().getVersion()
+       Name = readMavenPom().getName()
+       GroupId = readMavenPom().getGroupId()
+    }
     stages {
         // Specify various stage with in stages
 
@@ -23,67 +28,86 @@ pipeline{
             }
         }
 
-        //Stage3 : Publsih the artifacts to nexus
-        stage ('Pubish to nexus repository'){
-            steps {nexusArtifactUploader artifacts: [[artifactId: 'ssvkart5devops', classifier: '', file: 'target/ssvkart5devops-0.0.4-SNAPSHOT.war', type: 'wat']], credentialsId: 'ba2eba7f-17c9-48ca-8c96-60769372b217', groupId: 'com.ssvkart5lab', nexusUrl: '172.20.10.199:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'ssvkart5devops-SNAPSHOT', version: '0.0.4-SNAPSHOT'
-            }
-        }   
-
-        // Stage4 : Deploying
-        stage ('Deploy'){
+        // Stage3 : Publish the artifacts to Nexus
+        stage ('Publish to Nexus'){
             steps {
-                echo 'deploying....'
-                sshPublisher(publishers:
-                [sshPublisherDesc(
-                    configName: 'ansible-controlplane', 
-                    transfers: [
-                        sshTransfer(
-                            cleanRemote: false, 
-                            excludes: '', 
-                            execCommand: 'ansible-playbook /opt/playbooks/downloaddeploy.yaml -i /opt/playbooks/hosts', 
-                            execTimeout: 120000, 
-                            flatten: false, 
-                            makeEmptyDirs: false, 
-                            noDefaultExcludes: false, 
-                            patternSeparator: '[, ]+', 
-                            remoteDirectory: '', 
-                            remoteDirectorySDF: false, 
-                            removePrefix: '', sourceFiles: '')], 
-                            usePromotionTimestamp: false, 
-                            useWorkspaceInPromotion: false, 
-                            verbose: false)]
-                            )
-                }
+                script {
 
-            }
-        
-        // Stage5 : Deploying the build artifact to Docker
-        stage ('Deploy to docker'){
-            steps {
-                echo 'deploying....'
-                sshPublisher(publishers:
-                [sshPublisherDesc(
-                    configName: 'ansible-controlplane', 
-                    transfers: [
-                        sshTransfer(
-                            cleanRemote: false, 
-                            excludes: '', 
-                            execCommand: 'ansible-playbook /opt/playbooks/downloaddeploy-docker.yaml -i /opt/playbooks/hosts', 
-                            execTimeout: 120000, 
-                            flatten: false, 
-                            makeEmptyDirs: false, 
-                            noDefaultExcludes: false, 
-                            patternSeparator: '[, ]+', 
-                            remoteDirectory: '', 
-                            remoteDirectorySDF: false, 
-                            removePrefix: '', sourceFiles: '')], 
-                            usePromotionTimestamp: false, 
-                            useWorkspaceInPromotion: false, 
-                            verbose: false)]
-                            )
-                }
+                def NexusRepo = Version.endsWith("SNAPSHOT") ? "ssvkart5devops-SNAPSHOT" : "ssvkart5devops-RELEASE"
 
+                nexusArtifactUploader artifacts: 
+                [[artifactId: "${ArtifactId}", 
+                classifier: '', 
+                file: "target/${ArtifactId}-${Version}.war", 
+                type: 'war']], 
+                credentialsId: 'ba2eba7f-17c9-48ca-8c96-60769372b217', 
+                groupId: "${GroupId}", 
+                nexusUrl: '172.20.10.199:8081', 
+                nexusVersion: 'nexus3', 
+                protocol: 'http', 
+                repository: "${NexusRepo}", 
+                version: "${Version}"
+             }
             }
         }
+
+        // Stage 4 : Print some information
+        stage ('Print Environment variables'){
+                    steps {
+                        echo "Artifact ID is '${ArtifactId}'"
+                        echo "Version is '${Version}'"
+                        echo "GroupID is '${GroupId}'"
+                        echo "Name is '${Name}'"
+                    }
+                }
+
+        // Stage 5 : Deploying the build artifact to Apache Tomcat
+        stage ('Deploy to Tomcat'){
+            steps {
+                echo "Deploying ...."
+                sshPublisher(publishers: 
+                [sshPublisherDesc(
+                    configName: 'Ansible_Controller', 
+                    transfers: [
+                        sshTransfer(
+                                cleanRemote:false,
+                                execCommand: 'ansible-playbook /opt/playbooks/downloaddeploy_tomcat_user.yaml -i /opt/playbooks/hosts',
+                                execTimeout: 120000
+                        )
+                    ], 
+                    usePromotionTimestamp: false, 
+                    useWorkspaceInPromotion: false, 
+                    verbose: false)
+                    ])
+            
+            }
+        }
+
+    // Stage 6 : Deploying the build artifact to Docker
+        stage ('Deploy to Docker'){
+            steps {
+                echo "Deploying ...."
+                sshPublisher(publishers: 
+                [sshPublisherDesc(
+                    configName: 'Ansible_Controller', 
+                    transfers: [
+                        sshTransfer(
+                                cleanRemote:false,
+                                execCommand: 'ansible-playbook /opt/playbooks/downloaddeploy-docker.yaml -i /opt/playbooks/hosts',
+                                execTimeout: 120000
+                        )
+                    ], 
+                    usePromotionTimestamp: false, 
+                    useWorkspaceInPromotion: false, 
+                    verbose: false)
+                    ])
+            
+            }
+        }
+
+
+
+
+    }
+
 }
-    
