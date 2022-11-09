@@ -33,8 +33,6 @@ pipeline{
             steps {
                 script {
 
-                def NexusRepo = "ssvkart5devops-SNAPSHOT"
-
                 nexusArtifactUploader artifacts: 
                 [[artifactId: "${ArtifactId}", 
                 classifier: '', 
@@ -45,7 +43,7 @@ pipeline{
                 nexusUrl: '172.20.10.199:8081', 
                 nexusVersion: 'nexus3', 
                 protocol: 'http', 
-                repository: "${NexusRepo}", 
+                repository: 'ssvkart5devops-SNAPSHOT', 
                 version: "${Version}"
              }
             }
